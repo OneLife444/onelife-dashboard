@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One Life Recovery — Grant Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     EDIT SECTION: Change colors, fonts, or layout here
+     ============================================================ */
+  :root {
+    --bg:        #0f0f0f;
+    --surface:   #181818;
+    --surface2:  #202020;
+    --border:    rgba(255,255,255,0.07);
+    --border2:   rgba(255,255,255,0.12);
+    --text:      #f0ede8;
+    --text2:     #888880;
+    --text3:     #555550;
+    --accent:    #c8f0a0;
+    --accent2:   #8ed660;
+    --red:       #ff6b6b;
+    --amber:     #f0a050;
+    --blue:      #70b8ff;
+    --purple:    #b8a0f8;
+    --gray:      #606060;
+    --funded:    #c8f0a0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1.5rem;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ---- HEADER ---- */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo-area { display: flex; flex-direction: column; gap: 4px; }
+  .org-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .org-sub { font-size: 12px; color: var(--text3); font-family: 'DM Mono', monospace; }
+  .header-right { text-align: right; }
+  .updated { font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; margin-bottom: 6px; }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 500;
+    background: rgba(200,240,160,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(200,240,160,0.2);
+    border-radius: 20px;
+    padding: 4px 10px;
+  }
+  .status-pill::before {
+    content: ''; width: 6px; height: 6px;
+    background: var(--accent2); border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100%{opacity:1} 50%{opacity:0.4}
+  }
+
+  /* ---- METRICS ---- */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0,1fr));
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+  .metric {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .metric-label { font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .metric-value { font-size: 26px; font-weight: 600; letter-spacing: -0.03em; color: var(--text); }
+  .metric-value.green { color: var(--accent); }
+  .metric-value.blue  { color: var(--blue); }
+  .metric-value.amber { color: var(--amber); }
+  .metric-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+  /* ---- LAYOUT ---- */
+  .main-grid {
+    display: grid;
+    grid-template-columns: minmax(0,1.65fr) minmax(0,1fr);
+    gap: 10px;
+    align-items: start;
+  }
+  .right-col { display: flex; flex-direction: column; gap: 10px; }
+
+  /* ---- CARD ---- */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .card-title {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 14px;
+  }
+
+  /* ---- GRANT TABLE ---- */
+  .table-head {
+    display: grid;
+    grid-template-columns: 1fr 80px 78px 90px;
+    gap: 8px;
+    padding: 0 0 8px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2px;
+  }
+  .table-head span {
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    font-family: 'DM Mono', monospace;
+  }
+  .table-head span:not(:first-child) { text-align: right; }
+
+  .grant-row {
+    display: grid;
+    grid-template-columns: 1fr 80px 78px 90px;
+    gap: 8px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+    border-radius: 4px;
+  }
+  .grant-row:last-child { border-bottom: none; }
+  .grant-row:hover { background: var(--surface2); }
+
+  .grant-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .grant-note { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .grant-amount { font-size: 12px; color: var(--text2); text-align: right; font-family: 'DM Mono', monospace; }
+  .grant-deadline { font-size: 12px; color: var(--text2); text-align: right; font-family: 'DM Mono', monospace; }
+  .grant-deadline.urgent { color: var(--red); font-weight: 500; }
+  .badge-wrap { text-align: right; }
+
+  /* ---- BADGES ---- */
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-family: 'DM Mono', monospace;
+    white-space: nowrap;
+  }
+  .badge.red    { background: rgba(255,107,107,0.12); color: var(--red);    border: 1px solid rgba(255,107,107,0.2); }
+  .badge.amber  { background: rgba(240,160,80,0.12);  color: var(--amber);  border: 1px solid rgba(240,160,80,0.2); }
+  .badge.blue   { background: rgba(112,184,255,0.12); color: var(--blue);   border: 1px solid rgba(112,184,255,0.2); }
+  .badge.green  { background: rgba(200,240,160,0.12); color: var(--accent); border: 1px solid rgba(200,240,160,0.2); }
+  .badge.gray   { background: rgba(100,100,100,0.15); color: var(--gray);   border: 1px solid rgba(100,100,100,0.2); }
+  .badge.purple { background: rgba(184,160,248,0.12); color: var(--purple); border: 1px solid rgba(184,160,248,0.2); }
+
+  /* ---- TASKS ---- */
+  .task-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .task-row:last-child { border-bottom: none; }
+  .task-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--red);
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+  .task-dot.low { background: var(--blue); }
+  .task-text { font-size: 13px; color: var(--text); font-weight: 500; }
+  .task-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  /* ---- DEADLINES ---- */
+  .dl-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 8px;
+  }
+  .dl-row:last-child { border-bottom: none; }
+  .dl-date { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--text3); min-width: 64px; flex-shrink: 0; }
+  .dl-date.urgent { color: var(--red); font-weight: 500; }
+  .dl-name { font-size: 12px; color: var(--text2); text-align: right; }
+
+  /* ---- DIVIDER ---- */
+  .section-divider {
+    font-size: 10px; color: var(--text3);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    font-family: 'DM Mono', monospace;
+    padding: 10px 0 6px;
+    border-top: 1px solid var(--border);
+    margin-top: 4px;
+  }
+
+  /* ---- FOOTER ---- */
+  .footer {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-note { font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; }
+  .footer-total { font-size: 13px; font-weight: 600; color: var(--accent); font-family: 'DM Mono', monospace; }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 900px) {
+    .metrics { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .main-grid { grid-template-columns: 1fr; }
+    .table-head, .grant-row { grid-template-columns: 1fr 70px 80px; }
+    .table-head span:nth-child(2), .grant-row .grant-amount { display: none; }
+  }
+  @media (max-width: 540px) {
+    body { padding: 1rem; }
+    .header { flex-direction: column; gap: 12px; }
+    .header-right { text-align: left; }
+    .metrics { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .table-head, .grant-row { grid-template-columns: 1fr 70px 80px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER — edit org name, last updated date, house count
+     ============================================================ -->
+<div class="header">
+  <div class="logo-area">
+    <div class="org-name">One Life Recovery Society</div>
+    <!-- EDIT: Change date each time you update -->
+    <div class="org-sub">Grant dashboard · Last updated: March 31, 2026</div>
+  </div>
+  <div class="header-right">
+    <div class="updated">Brett Johnson, Executive Director</div>
+    <!-- EDIT: Change number of active houses -->
+    <div class="status-pill">3 houses active · Nanaimo, BC</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     METRICS — edit the 4 key numbers at the top
+     ============================================================ -->
+<div class="metrics">
+
+  <!-- EDIT: Total value of all grants in pipeline -->
+  <div class="metric">
+    <div class="metric-label">Pipeline value</div>
+    <div class="metric-value">$2.4M+</div>
+    <div class="metric-sub">16 programs identified</div>
+  </div>
+
+  <!-- EDIT: Total grant dollars received/approved this year -->
+  <div class="metric">
+    <div class="metric-label">Funded this year</div>
+    <div class="metric-value green">$0</div>
+    <div class="metric-sub">First applications in progress</div>
+  </div>
+
+  <!-- EDIT: Current beds occupied / total capacity -->
+  <div class="metric">
+    <div class="metric-label">Beds occupied</div>
+    <div class="metric-value blue">— / 21</div>
+    <div class="metric-sub">Across 3 houses</div>
+  </div>
+
+  <!-- EDIT: Number of people on waitlist -->
+  <div class="metric">
+    <div class="metric-label">Waitlist</div>
+    <div class="metric-value amber">—</div>
+    <div class="metric-sub">People waiting for a bed</div>
+  </div>
+
+</div>
+
+<!-- ============================================================
+     MAIN GRID — left: grant pipeline, right: tasks + deadlines
+     ============================================================ -->
+<div class="main-grid">
+
+  <!-- LEFT: GRANT PIPELINE -->
+  <div class="card">
+    <div class="card-title">Grant pipeline</div>
+
+    <div class="table-head">
+      <span>Grant</span>
+      <span>Amount</span>
+      <span>Deadline</span>
+      <span>Status</span>
+    </div>
+
+    <!-- =====================================================
+         GRANT ROWS
+         STATUS BADGE OPTIONS:
+           red    = with Brett (needs review/action)
+           amber  = drafting (in progress)
+           green  = submitted (waiting on decision)
+           blue   = open (rolling intake, apply anytime)
+           purple = monitor (no active window yet)
+           gray   = prepare (deadline 3+ months away)
+
+         DEADLINE CLASS:
+           class="grant-deadline urgent"  = red text (within 30 days)
+           class="grant-deadline"         = normal grey text
+
+         TO ADD A ROW: copy one block and change the values
+         TO REMOVE A ROW: delete the block
+         ===================================================== -->
+
+    <!-- Row 1 -->
+    <div class="grant-row">
+      <div>
+        <div class="grant-name">Pacific Blue Cross Kick-Start</div>
+        <div class="grant-note">Adventure therapy program — draft complete, needs Brett review</div>
+      </div>
+      <div class="grant-amount">$8,500</div>
+      <div class="grant-deadline urgent">Apr 7</div>
+      <div class="badge-wrap"><span class="badge red">with Brett</span></div>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="grant-row">
+      <div>
+        <div class="grant-name">RDN Community Grants</div>
+        <div class="grant-note">Regional District of Nanaimo — drafting now</div>
+      </div>
+      <div class="grant-amount">TBD</div>
+      <div class="grant-deadline urgent">~Apr 24</div>
+      <div class="badge-wrap"><span class="badge amber">drafting</span></div>
+    </div>
+
+    <!-- Row 3 -->
+    <div class="grant-row">
+      <div>
+        <div class="grant-name">City of Nanaimo — Other Grants</div>
+        <div class="grant-note">Two intakes yearly — May and September</div>
+      </div>
+      <div class="grant-amount">Variable</div>
+      <div class="grant-deadline">May 15</div>
+      <div class="badge-wrap"><span class="badge amber">drafting</span></div>
+    </div>
+
+    <!-- Row 4 -->
+    <div class="grant-row">
+      <div>
+        <div class="grant-name">Vancouver Foundation Transforming Systems</div>
+        <div class="grant-note">Opens June 2026 · Randomized selection · Nanaimo-favoured pool</div>
+      </div>
+      <div class="grant-amount">$300,000</div>
+      <div class="grant-deadline">Jun 2026</div>
+      <div class="badge-wrap"><span class="badge gray">prepare</span></div>
+    </div>
+
+    <!-- Row 5 -->
+    <div class="grant-row">
+      <div>
+        <div class="grant-name">BC Community Gaming Grants</div>
+        <div class="grant-note">~90% award rate · Annual · Needs Business BCeID + financials</div>
+      </div>
+      <div class="grant-amount">$125,000</div>
+      <div class="grant-deadline">Nov 30</div>
+      <div class="badge-wrap"><span class="badge gray">prepare</span></div>
+    </div>
+
+    <!-- Divider -->
+    <div class="section-divider">Rolling intake — apply anytime</div>
+
+    <!-- Row 6 -->
+    <div class="grant-row">
+      <div>
+        <div class="grant-name">Build Canada Homes</div>
+        <div class="grant-note">Supportive housing stream · $1B pool · Contact BC Housing first</div>
+      </div>
+      <div class="grant-amount">Flexible</div>
+      <div class="grant-deadline">Ongoing</div>
+      <div class="badge-wrap"><span class="badge blue">open</span></div>
+    </div>
+
+    <!-- Row 7 -->
+    <div class="grant-row">
+      <div>
+        <div class="grant-name">PacifiCan CEDD</div>
+        <div class="grant-note">Up to 50% of eligible costs · Email Vancouver Island office first</div>
+      </div>
+      <div class="grant-amount">50% costs</div>
+      <div class="grant-deadline">Ongoing</div>
+      <div class="badge-wrap"><span class="badge blue">open</span></div>
+    </div>
+
+    <!-- Divider -->
+    <div class="section-divider">Monitor — no active window yet</div>
+
+    <!-- Row 8 -->
+    <div class="grant-row">
+      <div>
+        <div class="grant-name">Veterans Affairs Well-being Fund</div>
+        <div class="grant-note">Est. spring/summer 2026 · Develop veteran stream to qualify</div>
+      </div>
+      <div class="grant-amount">$1M/yr</div>
+      <div class="grant-deadline">TBD</div>
+      <div class="badge-wrap"><span class="badge purple">monitor</span></div>
+    </div>
+
+    <!-- Row 9 -->
+    <div class="grant-row">
+      <div>
+        <div class="grant-name">Health Canada SUAP</div>
+        <div class="grant-note">Best federal fit · No CFP open · Subscribe to alerts</div>
+      </div>
+      <div class="grant-amount">$200–800K</div>
+      <div class="grant-deadline">TBD</div>
+      <div class="badge-wrap"><span class="badge purple">monitor</span></div>
+    </div>
+
+    <!-- Row 10 -->
+    <div class="grant-row">
+      <div>
+        <div class="grant-name">Opportunities Fund — Disabilities</div>
+        <div class="grant-note">Substance use disorder qualifies · Contact BC Centre for Ability</div>
+      </div>
+      <div class="grant-amount">Up to $15M</div>
+      <div class="grant-deadline">TBD</div>
+      <div class="badge-wrap"><span class="badge purple">monitor</span></div>
+    </div>
+
+    <!-- Row 11 -->
+    <div class="grant-row">
+      <div>
+        <div class="grant-name">Community Action Initiative</div>
+        <div class="grant-note">Closed to new applicants · Watch for reopening</div>
+      </div>
+      <div class="grant-amount">$130K/yr</div>
+      <div class="grant-deadline">TBD</div>
+      <div class="badge-wrap"><span class="badge purple">monitor</span></div>
+    </div>
+
+    <!-- Row 12 -->
+    <div class="grant-row">
+      <div>
+        <div class="grant-name">Island Health Community Wellness</div>
+        <div class="grant-note">Watch for spring 2026 opening · Up to $12K per project</div>
+      </div>
+      <div class="grant-amount">$12,000</div>
+      <div class="grant-deadline">TBD</div>
+      <div class="badge-wrap"><span class="badge purple">monitor</span></div>
+    </div>
+
+  </div><!-- end grant pipeline card -->
+
+  <!-- RIGHT COLUMN -->
+  <div class="right-col">
+
+    <!-- NEEDS BRETT -->
+    <div class="card">
+      <div class="card-title">Needs Brett</div>
+
+      <!-- =====================================================
+           TASK ROWS
+           dot class="task-dot"      = red dot (urgent)
+           dot class="task-dot low"  = blue dot (lower priority)
+
+           TO ADD: copy a task-row block
+           TO REMOVE: delete the block
+           TO MARK DONE: delete the block
+           ===================================================== -->
+
+      <div class="task-row">
+        <div class="task-dot"></div>
+        <div>
+          <div class="task-text">Review PBC draft application</div>
+          <div class="task-sub">Confirm instructor details + budget · Due Apr 7</div>
+        </div>
+      </div>
+
+      <div class="task-row">
+        <div class="task-dot"></div>
+        <div>
+          <div class="task-text">Send outcomes data to Mark</div>
+          <div class="task-sub">Completion rates, employment, sobriety numbers</div>
+        </div>
+      </div>
+
+      <div class="task-row">
+        <div class="task-dot"></div>
+        <div>
+          <div class="task-text">Send 2 years of financials</div>
+          <div class="task-sub">Screenshot or spreadsheet, any format fine</div>
+        </div>
+      </div>
+
+      <div class="task-row">
+        <div class="task-dot"></div>
+        <div>
+          <div class="task-text">Provide CRA charity number</div>
+          <div class="task-sub">9-digit BN — required for federal applications</div>
+        </div>
+      </div>
+
+      <div class="task-row">
+        <div class="task-dot low"></div>
+        <div>
+          <div class="task-text">Register Business BCeID</div>
+          <div class="task-sub">Required for Gaming Grant portal · Takes 5–10 days</div>
+        </div>
+      </div>
+
+      <div class="task-row">
+        <div class="task-dot low"></div>
+        <div>
+          <div class="task-text">Confirm daily rate billing</div>
+          <div class="task-sub">Verify all beds billing at $60/day since Jun 2024</div>
+        </div>
+      </div>
+
+    </div><!-- end needs brett -->
+
+    <!-- DEADLINES -->
+    <div class="card">
+      <div class="card-title">Next 60 days</div>
+
+      <!-- =====================================================
+           DEADLINE ROWS
+           dl-date class="dl-date urgent" = red (within 2 weeks)
+           dl-date class="dl-date"        = normal grey
+
+           TO ADD: copy a dl-row block
+           TO REMOVE: delete the block
+           ===================================================== -->
+
+      <div class="dl-row">
+        <div class="dl-date urgent">Apr 7</div>
+        <div class="dl-name">Pacific Blue Cross — submit</div>
+      </div>
+      <div class="dl-row">
+        <div class="dl-date urgent">~Apr 24</div>
+        <div class="dl-name">RDN Community Grants</div>
+      </div>
+      <div class="dl-row">
+        <div class="dl-date">May 1</div>
+        <div class="dl-name">Nanaimo Program Dev't Grant</div>
+      </div>
+      <div class="dl-row">
+        <div class="dl-date">May 15</div>
+        <div class="dl-name">Nanaimo Other Grants</div>
+      </div>
+      <div class="dl-row">
+        <div class="dl-date">Jun 2026</div>
+        <div class="dl-name">VF Transforming Systems opens</div>
+      </div>
+      <div class="dl-row">
+        <div class="dl-date">Jun 30</div>
+        <div class="dl-name">Nanaimo Tax Exemption</div>
+      </div>
+      <div class="dl-row">
+        <div class="dl-date">Aug 1</div>
+        <div class="dl-name">Gaming Grants window opens</div>
+      </div>
+
+    </div><!-- end deadlines -->
+
+  </div><!-- end right col -->
+</div><!-- end main grid -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-note">oneliferecoverysociety.ca · brett@one-life.ca · 250-619-9663</div>
+  <div class="footer-total">$2.4M+ pipeline · 16 programs</div>
+</div>
+
+</body>
+</html>
