@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One Life Recovery — Private Funding Pipeline</title>
+<style>
+  /* ── TOKENS ─────────────────────────────────────────────── */
+  :root {
+    --bg:        #0f1117;
+    --surface:   #181c27;
+    --surface2:  #1e2333;
+    --border:    #2a3045;
+    --text:      #e2e8f0;
+    --muted:     #7a8aa0;
+    --accent:    #4f8ef7;
+    --accent2:   #38bdf8;
+    --green:     #34d399;
+    --yellow:    #fbbf24;
+    --orange:    #fb923c;
+    --red:       #f87171;
+    --purple:    #a78bfa;
+    --teal:      #2dd4bf;
+    --font-head: 'Georgia', 'Times New Roman', serif;
+    --font-body: 'Menlo', 'Consolas', 'Courier New', monospace;
+  }
+
+  /* ── RESET ───────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 14px; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  a { color: var(--accent2); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── LAYOUT ──────────────────────────────────────────────── */
+  .page { max-width: 1280px; margin: 0 auto; padding: 28px 20px 60px; }
+
+  /* ── HEADER ──────────────────────────────────────────────── */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-left h1 {
+    font-family: var(--font-head);
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .header-left p {
+    color: var(--muted);
+    font-size: 0.8rem;
+    margin-top: 4px;
+  }
+  .updated {
+    font-size: 0.72rem;
+    color: var(--muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 5px 11px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  /* ── METRIC CARDS ────────────────────────────────────────── */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px 18px;
+  }
+  .card-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .card-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    font-family: var(--font-head);
+    line-height: 1;
+  }
+  .card-sub {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .c-green  { color: var(--green); }
+  .c-yellow { color: var(--yellow); }
+  .c-accent { color: var(--accent); }
+  .c-orange { color: var(--orange); }
+  .c-teal   { color: var(--teal); }
+  .c-purple { color: var(--purple); }
+  .c-red    { color: var(--red); }
+  .c-muted  { color: var(--muted); }
+
+  /* ── SECTION HEADERS ─────────────────────────────────────── */
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 32px 0 14px;
+  }
+  .section-head h2 {
+    font-family: var(--font-head);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .section-head .badge {
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .badge-local    { color: var(--teal);   border-color: var(--teal);   background: rgba(45,212,191,.08); }
+  .badge-bc       { color: var(--accent); border-color: var(--accent); background: rgba(79,142,247,.08); }
+  .badge-warn     { color: var(--yellow); border-color: var(--yellow); background: rgba(251,191,36,.08); }
+  .badge-action   { color: var(--green);  border-color: var(--green);  background: rgba(52,211,153,.08); }
+  .section-rule { flex: 1; height: 1px; background: var(--border); }
+
+  /* ── TABLE ───────────────────────────────────────────────── */
+  .table-wrap { overflow-x: auto; border-radius: 6px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+  thead tr { background: var(--surface2); }
+  thead th {
+    padding: 9px 12px;
+    text-align: left;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--muted);
+    font-weight: 600;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr { background: var(--surface); border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+  td { padding: 9px 12px; vertical-align: middle; }
+  td.funder { font-weight: 600; color: var(--text); min-width: 160px; }
+  td.fit { color: var(--muted); font-size: 0.72rem; max-width: 280px; line-height: 1.45; }
+  td.range { white-space: nowrap; color: var(--green); font-weight: 600; }
+  td.deadline { white-space: nowrap; }
+  td.action-cell { white-space: nowrap; }
+
+  /* ── CATEGORY PILL ───────────────────────────────────────── */
+  .cat {
+    display: inline-block;
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .cat-foundation { background: rgba(167,139,250,.15); color: var(--purple); }
+  .cat-credit     { background: rgba(45,212,191,.15);  color: var(--teal); }
+  .cat-corporate  { background: rgba(79,142,247,.15);  color: var(--accent); }
+  .cat-service    { background: rgba(251,191,36,.15);  color: var(--yellow); }
+  .cat-faith      { background: rgba(249,115,22,.15);  color: var(--orange); }
+  .cat-indigenous { background: rgba(52,211,153,.15);  color: var(--green); }
+  .cat-gaming     { background: rgba(248,113,113,.15); color: var(--red); }
+  .cat-govt       { background: rgba(56,189,248,.15);  color: var(--accent2); }
+  .cat-event      { background: rgba(251,191,36,.15);  color: var(--yellow); }
+
+  /* ── STATUS BADGE ────────────────────────────────────────── */
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.65rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    white-space: nowrap;
+  }
+  .status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .s-open     { background: rgba(52,211,153,.12);  color: var(--green);  border: 1px solid rgba(52,211,153,.3); }
+  .s-open::before     { background: var(--green);  box-shadow: 0 0 6px var(--green); }
+  .s-upcoming { background: rgba(251,191,36,.12);  color: var(--yellow); border: 1px solid rgba(251,191,36,.3); }
+  .s-upcoming::before { background: var(--yellow); }
+  .s-relation { background: rgba(167,139,250,.12); color: var(--purple); border: 1px solid rgba(167,139,250,.3); }
+  .s-relation::before { background: var(--purple); }
+  .s-caveat   { background: rgba(251,130,36,.12);  color: var(--orange); border: 1px solid rgba(251,130,36,.3); }
+  .s-caveat::before   { background: var(--orange); }
+  .s-monitor  { background: rgba(122,138,160,.12); color: var(--muted);  border: 1px solid rgba(122,138,160,.3); }
+  .s-monitor::before  { background: var(--muted); }
+
+  /* ── QUICK WINS ──────────────────────────────────────────── */
+  .quickwins {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .qw {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--green);
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+  .qw-title { font-weight: 700; font-size: 0.82rem; color: var(--text); margin-bottom: 4px; }
+  .qw-amount { font-size: 0.72rem; color: var(--green); font-weight: 700; margin-bottom: 4px; }
+  .qw-action { font-size: 0.71rem; color: var(--muted); }
+
+  /* ── WARNINGS ────────────────────────────────────────────── */
+  .warnings {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .warn-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--yellow);
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+  .warn-card.red   { border-left-color: var(--red); }
+  .warn-card.teal  { border-left-color: var(--teal); }
+  .warn-card.purple { border-left-color: var(--purple); }
+  .warn-title { font-weight: 700; font-size: 0.78rem; color: var(--text); margin-bottom: 4px; }
+  .warn-body  { font-size: 0.71rem; color: var(--muted); line-height: 1.5; }
+
+  /* ── NEEDS BRETT ─────────────────────────────────────────── */
+  .brett-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 10px;
+  }
+  .brett-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 11px 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .brett-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+  .brett-label { font-size: 0.75rem; font-weight: 700; color: var(--text); }
+  .brett-why   { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
+
+  /* ── DEADLINE STRIP ──────────────────────────────────────── */
+  .deadline-strip {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    margin-bottom: 4px;
+  }
+  .dl-item {
+    flex-shrink: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    min-width: 170px;
+  }
+  .dl-date { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .dl-name { font-size: 0.78rem; font-weight: 700; color: var(--text); margin: 3px 0 2px; }
+  .dl-amt  { font-size: 0.7rem; color: var(--green); }
+  .dl-now  { border-top: 2px solid var(--green); }
+  .dl-90   { border-top: 2px solid var(--yellow); }
+  .dl-6m   { border-top: 2px solid var(--accent); }
+
+  /* ── FOOTER ──────────────────────────────────────────────── */
+  .footer {
+    margin-top: 48px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 0.68rem;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @media (max-width: 640px) {
+    .header { flex-direction: column; }
+    td.fit { max-width: 200px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── HEADER ── -->
+  <div class="header">
+    <div class="header-left">
+      <h1>One Life Recovery Society — Private Funding Pipeline</h1>
+      <p>Local &amp; BC-wide private, corporate, and community funders · Nanaimo, BC</p>
+    </div>
+    <div class="updated">Updated: April 1, 2026</div>
+  </div>
+
+  <!-- ── METRICS ── -->
+  <div class="metrics">
+    <div class="card">
+      <div class="card-label">Total Prospects</div>
+      <div class="card-value c-accent">42</div>
+      <div class="card-sub">Local + BC-wide</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Open / Rolling Now</div>
+      <div class="card-value c-green">19</div>
+      <div class="card-sub">No deadline — apply anytime</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Est. Annual Value</div>
+      <div class="card-value c-yellow">$500K+</div>
+      <div class="card-sub">If portfolio fully developed</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Next Deadline</div>
+      <div class="card-value c-orange">Apr 13</div>
+      <div class="card-sub">BC Charitable Gaming rules</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Needs Indigenous Partner</div>
+      <div class="card-value c-teal">3</div>
+      <div class="card-sub">FNHA grants require co-applicant</div>
+    </div>
+  </div>
+
+  <!-- ── DEADLINE STRIP ── -->
+  <div class="section-head">
+    <h2>Upcoming Deadlines</h2>
+    <div class="badge badge-warn">Next 12 months</div>
+    <div class="section-rule"></div>
+  </div>
+  <div class="deadline-strip">
+    <div class="dl-item dl-now">
+      <div class="dl-date">Apr 13, 2026</div>
+      <div class="dl-name">BC Charitable Gaming</div>
+      <div class="dl-amt">New simplified rules</div>
+    </div>
+    <div class="dl-item dl-now">
+      <div class="dl-date">Rolling — Now</div>
+      <div class="dl-name">Coastal Community CU</div>
+      <div class="dl-amt">Up to $10,000</div>
+    </div>
+    <div class="dl-item dl-now">
+      <div class="dl-date">Rolling — Now</div>
+      <div class="dl-name">First West Foundation</div>
+      <div class="dl-amt">$5,000–$25,000</div>
+    </div>
+    <div class="dl-item dl-now">
+      <div class="dl-date">Rolling — Now</div>
+      <div class="dl-name">Pacific Blue Cross HF</div>
+      <div class="dl-amt">$10,000–$30,000</div>
+    </div>
+    <div class="dl-item dl-now">
+      <div class="dl-date">Rolling — Now</div>
+      <div class="dl-name">Nanaimo Foundation GWYL</div>
+      <div class="dl-amt">Contact Chelsea Pope</div>
+    </div>
+    <div class="dl-item dl-90">
+      <div class="dl-date">Jun 2026</div>
+      <div class="dl-name">Vancouver Foundation TSG</div>
+      <div class="dl-amt">Up to $100K/yr × 3</div>
+    </div>
+    <div class="dl-item dl-90">
+      <div class="dl-date">Jul 2026</div>
+      <div class="dl-name">Lululemon Wellbeing</div>
+      <div class="dl-amt">Up to $50K USD</div>
+    </div>
+    <div class="dl-item dl-6m">
+      <div class="dl-date">Aug–Oct 2026</div>
+      <div class="dl-name">BC Gaming Grants</div>
+      <div class="dl-amt">Up to $125,000/yr</div>
+    </div>
+    <div class="dl-item dl-6m">
+      <div class="dl-date">Nov 30, 2026</div>
+      <div class="dl-name">BC Community Gaming</div>
+      <div class="dl-amt">Up to $125,000</div>
+    </div>
+    <div class="dl-item dl-6m">
+      <div class="dl-date">Jan 2027</div>
+      <div class="dl-name">FNHA Harm Reduction</div>
+      <div class="dl-amt">Up to $50,000</div>
+    </div>
+    <div class="dl-item dl-6m">
+      <div class="dl-date">Sep 2026</div>
+      <div class="dl-name">City of Nanaimo Social</div>
+      <div class="dl-amt">$2,500–$30,000</div>
+    </div>
+    <div class="dl-item dl-6m">
+      <div class="dl-date">Sep 12, 2026</div>
+      <div class="dl-name">Recovery Day BC Booth</div>
+      <div class="dl-amt">$200 — book now</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       LOCAL PROSPECTS — NANAIMO / ISLAND
+  ═════════════════════════════════════════ -->
+  <div class="section-head">
+    <h2>Local Prospects — Nanaimo &amp; Vancouver Island</h2>
+    <div class="badge badge-local">Local</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Funder</th>
+          <th>Category</th>
+          <th>Grant Range</th>
+          <th>Status</th>
+          <th>Deadline / Next Action</th>
+          <th>Fit Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr>
+          <td class="funder">Coastal Community Credit Union</td>
+          <td><span class="cat cat-credit">Credit Union</span></td>
+          <td class="range">Up to $10,000</td>
+          <td><span class="status s-open">Apply Now</span></td>
+          <td class="deadline">Rolling — dosomegood.ca</td>
+          <td class="fit">HQ in Nanaimo. Housing, mental health, homelessness are explicit priorities. $1.6M distributed in 2023 across VI.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">First West Foundation<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">(Island Savings Endowment)</span></td>
+          <td><span class="cat cat-foundation">Foundation</span></td>
+          <td class="range">$5,000–$25,000</td>
+          <td><span class="status s-open">Apply Now</span></td>
+          <td class="deadline">Rolling — firstwestfoundation.ca</td>
+          <td class="fit">Nanaimo in Island Savings territory. Trust-based philanthropy. Past grants to men's mental health & social services. $2.28M disbursed 2025.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Nanaimo Foundation<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Give Where You Live Fund</span></td>
+          <td><span class="cat cat-foundation">Foundation</span></td>
+          <td class="range">$1,000–$25,000</td>
+          <td><span class="status s-open">Apply Now</span></td>
+          <td class="deadline">Contact Chelsea Pope<br>250-816-9723</td>
+          <td class="fit">LOI window Mar 23 just closed — call immediately re: late submission or next cycle. Funded Unitarian Shelter kitchen ($15K) serving addictions/homeless.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Nanaimo Addiction Foundation</td>
+          <td><span class="cat cat-foundation">Foundation</span></td>
+          <td class="range">Up to $125,000</td>
+          <td><span class="status s-relation">Relationship First</span></td>
+          <td class="deadline">No public deadline —<br>contact directly</td>
+          <td class="fit">Funded $125K for a 20-bed Nanaimo addiction facility in 2012. Explicitly funds addiction services in Nanaimo. Best possible mission alignment.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Port of Nanaimo<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Community Involvement Fund</span></td>
+          <td><span class="cat cat-corporate">Corporate</span></td>
+          <td class="range">Seed grants</td>
+          <td><span class="status s-open">Apply Now</span></td>
+          <td class="deadline">Rolling — npa.ca<br>Contact Arlene Rolston</td>
+          <td class="fit">$3.5M given since 1991 for mid-Island community development. Seed funding model suits program expansion.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">City of Nanaimo<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Social Planning Grants</span></td>
+          <td><span class="cat cat-govt">Municipal</span></td>
+          <td class="range">$2,500–$30,000</td>
+          <td><span class="status s-upcoming">Sep 2026</span></td>
+          <td class="deadline">Watch Sep 2026 —<br>nanaimo.ca/grants</td>
+          <td class="fit">Annual cycle. Funds social cohesion, poverty reduction, mental health, life skills — all core to One Life's programming.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">City of Nanaimo<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Other Grants (rolling)</span></td>
+          <td><span class="cat cat-govt">Municipal</span></td>
+          <td class="range">Varies</td>
+          <td><span class="status s-open">Apply Now</span></td>
+          <td class="deadline">Rolling — nanaimo.ca/<br>your-government/grants</td>
+          <td class="fit">Separate rolling stream for community services outside City services scope. Lower competition than Social Planning Grants.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Rotary Club of Nanaimo</td>
+          <td><span class="cat cat-service">Service Club</span></td>
+          <td class="range">$1,000–$25,000+</td>
+          <td><span class="status s-open">Apply Now</span></td>
+          <td class="deadline">Rolling — email<br>rotaryclubofnanaimo@gmail.com</td>
+          <td class="fit">Directly funded CMHA addiction/mental health housing ($9,900). Funded NYSA Rowe House for youth substance use + housing. Strongest service club fit.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Rotary Club Nanaimo Daybreak<br>+ North + Oceanside</td>
+          <td><span class="cat cat-service">Service Club</span></td>
+          <td class="range">$500–$10,000</td>
+          <td><span class="status s-open">Apply Now</span></td>
+          <td class="deadline">Rolling — present at<br>club meetings</td>
+          <td class="fit">Three additional chapters; Oceanside contributes ~$100K/year combined with Mid-Island group of 24 clubs. Multiple applications possible.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Knights of Columbus<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Mid-Island Council 3842</span></td>
+          <td><span class="cat cat-faith">Faith</span></td>
+          <td class="range">$1,000–$5,000</td>
+          <td><span class="status s-open">Apply Now</span></td>
+          <td class="deadline">First Wed/month meeting<br>St. Peter's Church Hall</td>
+          <td class="fit">Founded the Columbian Centre Society — an addiction recovery housing organization in Nanaimo. Direct lived experience with this cause area.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Catholic Foundation<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Diocese of Victoria</span></td>
+          <td><span class="cat cat-faith">Faith</span></td>
+          <td class="range">$2,000–$10,000</td>
+          <td><span class="status s-open">Annual cycle</span></td>
+          <td class="deadline">Apply via Chancery<br>250-479-1331</td>
+          <td class="fit">Funds social welfare and community residences. Parish endorsement from Holy Trinity or St. Peter's required — strengthens application significantly.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Society of St. Vincent de Paul<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Nanaimo Conference</span></td>
+          <td><span class="cat cat-faith">Faith</span></td>
+          <td class="range">In-kind + small cash</td>
+          <td><span class="status s-open">Apply Now</span></td>
+          <td class="deadline">Rolling — 250-727-0007<br>ssvpvi@shaw.ca</td>
+          <td class="fit">Provides food cards, clothing, household items. Directly useful for resident onboarding and emergency needs in the houses.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Nanaimo Lions Club</td>
+          <td><span class="cat cat-service">Service Club</span></td>
+          <td class="range">$500–$5,000</td>
+          <td><span class="status s-open">Apply Now</span></td>
+          <td class="deadline">Rolling — 250-390-0730<br>2465 Labieux Rd</td>
+          <td class="fit">$60K+ donated to hospital since 1991. Community health focus. Present at a monthly meeting for best results.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Kiwanis Nanaimo Sunrisers</td>
+          <td><span class="cat cat-service">Service Club</span></td>
+          <td class="range">$500–$3,000</td>
+          <td><span class="status s-open">Apply Now</span></td>
+          <td class="deadline">Rolling — nanaimokiwanis.ca</td>
+          <td class="fit">Serves "the less-advantaged." Complementary to Rotary — apply to both. Smaller grants but low-effort to pursue.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Kinsmen Club of Nanaimo</td>
+          <td><span class="cat cat-service">Service Club</span></td>
+          <td class="range">$500–$3,000</td>
+          <td><span class="status s-open">Apply Now</span></td>
+          <td class="deadline">Rolling — kincanada.ca</td>
+          <td class="fit">"Serving the community's greatest need." Supports 7-10 Club and Habitat for Humanity — social services track record.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Altrusa Club of Nanaimo</td>
+          <td><span class="cat cat-service">Service Club</span></td>
+          <td class="range">In-kind donations</td>
+          <td><span class="status s-open">Apply Now</span></td>
+          <td class="deadline">Rolling —<br>nanaimo.altrusa@gmail.com</td>
+          <td class="fit">Supplies toiletries, towels, bedding to three Nanaimo shelters. Could supply One Life residents directly — low effort, immediate practical value.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">IWC Excavation / Knappett Industries<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Dirt Cup Charity Hockey</span></td>
+          <td><span class="cat cat-corporate">Corporate</span></td>
+          <td class="range">$5,000–$25,000</td>
+          <td><span class="status s-relation">Relationship First</span></td>
+          <td class="deadline">Annual — approach now<br>for 2027 beneficiary</td>
+          <td class="fit">18 construction sub-trades raised $120K+ since 2023 via Dirt Cup. One Life graduates = workforce pipeline — pitch as business relationship, not charity.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Tom Harris Charity Classic<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Golf tournament</span></td>
+          <td><span class="cat cat-event">Event</span></td>
+          <td class="range">$10,000+</td>
+          <td><span class="status s-relation">Relationship First</span></td>
+          <td class="deadline">Approach directors now —<br>tomharriscommunityfoundation.com</td>
+          <td class="fit">$825K raised in 2025, $4M+ since 2018. Apply for future beneficiary status. Contact Cody Dreger (Partnerships).</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Miri Piri Sikh Temple / Khalsa Diwan<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Nanaimo gurdwaras</span></td>
+          <td><span class="cat cat-faith">Faith</span></td>
+          <td class="range">$1,000–$10,000</td>
+          <td><span class="status s-relation">Relationship First</span></td>
+          <td class="deadline">Visit temple committee<br>3210 Sherman Rd</td>
+          <td class="fit">Miri Piri donated $10K to hospital foundation. Dasvandh principle drives substantial community giving. Warm personal introduction recommended.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Anglican Foundation of Canada<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">via local parish</span></td>
+          <td><span class="cat cat-faith">Faith</span></td>
+          <td class="range">$5,000–$50,000</td>
+          <td><span class="status s-upcoming">Jun 1, 2026</span></td>
+          <td class="deadline">Quarterly — Dec 1, Mar 1,<br>Jun 1, Sep 1</td>
+          <td class="fit">Community ministries = 1/3 of total funding. Recent $15K to Courtenay church. Requires Nanaimo Anglican parish sponsor. Apply anglicanfoundation.org.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Royal Canadian Legion<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Branches 10 &amp; 256 Nanaimo</span></td>
+          <td><span class="cat cat-service">Service Club</span></td>
+          <td class="range">$500–$3,000</td>
+          <td><span class="status s-caveat">If veterans served</span></td>
+          <td class="deadline">Poppy Fund — contact<br>rclbr10@shaw.ca</td>
+          <td class="fit">Primarily serves veterans. If any current or future residents are veterans, Legion Poppy Fund becomes a strong fit. Ask Brett about current resident demographics.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Snuneymuxw First Nation<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Health Centre partnership</span></td>
+          <td><span class="cat cat-indigenous">Indigenous</span></td>
+          <td class="range">Per-diem referrals</td>
+          <td><span class="status s-open">Apply Now</span></td>
+          <td class="deadline">Relationship — 250-740-2337<br>Hulit Lelum Health Centre</td>
+          <td class="fit">Nanaimo's host First Nation. Runs addiction recovery, acupuncture, naloxone programs. Formal referral agreement would generate funded beds for First Nations clients.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Tillicum Lelum Friendship Centre<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">927 Haliburton St, Nanaimo</span></td>
+          <td><span class="cat cat-indigenous">Indigenous</span></td>
+          <td class="range">Joint grants + referrals</td>
+          <td><span class="status s-open">Apply Now</span></td>
+          <td class="deadline">Relationship — 250-753-8291</td>
+          <td class="fit">Men's Wellness Program + Recovery Circle. Natural step-down referral pipeline. Could co-apply for FNHA Harm Reduction Grants ($50K) as Indigenous lead applicant.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Recovery Day BC<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Vendor booth</span></td>
+          <td><span class="cat cat-event">Event</span></td>
+          <td class="range">Awareness / donations</td>
+          <td><span class="status s-upcoming">Sep 12, 2026</span></td>
+          <td class="deadline">Book now — $200/booth<br>recoverydaybc.ca</td>
+          <td class="fit">20,000+ attendees. Canada's largest addiction/mental health festival. Highest mission-aligned event. Booths sell out — book immediately.</td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- ════════════════════════════════════════
+       BC-WIDE PROSPECTS
+  ═════════════════════════════════════════ -->
+  <div class="section-head">
+    <h2>BC-Wide Prospects</h2>
+    <div class="badge badge-bc">Provincial</div>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Funder</th>
+          <th>Category</th>
+          <th>Grant Range</th>
+          <th>Status</th>
+          <th>Deadline / Next Action</th>
+          <th>Fit Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr>
+          <td class="funder">BC Community Gaming Grants<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Human &amp; Social Services</span></td>
+          <td><span class="cat cat-govt">Provincial</span></td>
+          <td class="range">Up to $125,000/yr</td>
+          <td><span class="status s-upcoming">Aug–Oct 2026</span></td>
+          <td class="deadline">Nov 30, 2026 annual deadline<br>gov.bc.ca gaming-grants</td>
+          <td class="fit">Top priority. Substance use treatment, life skills, supportive housing are explicitly funded. $140M distributed annually. Comparable Nanaimo orgs received $110K.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">BC Charitable Gaming Licence<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Self-directed fundraising</span></td>
+          <td><span class="cat cat-gaming">Gaming</span></td>
+          <td class="range">$5K–$100K+ potential</td>
+          <td><span class="status s-open">New rules Apr 13</span></td>
+          <td class="deadline">Apply for licence now —<br>gov.bc.ca/gambling-licence</td>
+          <td class="fit">New simplified rules April 13, 2026. Raffles, 50/50 draws, poker nights. Housing project rules permit funds for supportive housing. No funder approval needed.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Vancouver Foundation<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Transforming Systems Grants</span></td>
+          <td><span class="cat cat-foundation">Foundation</span></td>
+          <td class="range">Up to $100K/yr × 3 yrs</td>
+          <td><span class="status s-upcoming">Jun 2026</span></td>
+          <td class="deadline">Opens June 2026 —<br>vancouverfoundation.ca</td>
+          <td class="fit">⚠️ Requires systemic-change framing — not just service delivery. One Life must position itself as transforming Nanaimo's recovery system. Sophisticated narrative needed.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Pacific Blue Cross Health Foundation<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Kick-Start Projects</span></td>
+          <td><span class="cat cat-foundation">Foundation</span></td>
+          <td class="range">$10,000–$30,000</td>
+          <td><span class="status s-open">Two intakes/year</span></td>
+          <td class="deadline">Rolling (twice yearly) —<br>pac.bluecross.ca/foundation</td>
+          <td class="fit">Explicitly encourages Nanaimo applications — geography outside Lower Mainland is a plus. Cannot fund salaries/rent; fund life skills curriculum or CBT group development.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Community Action Initiative<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Supportive Recovery Initiatives</span></td>
+          <td><span class="cat cat-govt">Provincial</span></td>
+          <td class="range">Up to $25,000</td>
+          <td><span class="status s-monitor">Monitor — closed</span></td>
+          <td class="deadline">Watch caibc.ca/grants for<br>new round opening</td>
+          <td class="fit">Designed specifically for registered bed-based recovery services. One Life is a textbook candidate. Currently closed — get on waitlist now.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Community Action Initiative<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Community Counselling Fund</span></td>
+          <td><span class="cat cat-govt">Provincial</span></td>
+          <td class="range">Up to $130,000/yr</td>
+          <td><span class="status s-monitor">Monitor — closed</span></td>
+          <td class="deadline">Watch caibc.ca/grants —<br>closed to new applicants</td>
+          <td class="fit">CBT groups, psychosocial support, life skills all qualify. Oral presentation process is approachable. One Life's BC registration is a strong credentialing asset.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Hamber Foundation<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Vancouver, BC</span></td>
+          <td><span class="cat cat-foundation">Foundation</span></td>
+          <td class="range">$5,000–$25,000</td>
+          <td><span class="status s-upcoming">Sep 2026 (historical)</span></td>
+          <td class="deadline">Two cycles/year —<br>hamberfoundation.ca</td>
+          <td class="fit">Prefers smaller orgs over large institutions. Health &amp; Welfare category. Expects multi-funder projects. One Life's size and diversified funding model is ideal for them.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">TELUS Friendly Future Foundation<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">VI Community Board</span></td>
+          <td><span class="cat cat-corporate">Corporate</span></td>
+          <td class="range">Up to $20,000</td>
+          <td><span class="status s-caveat">Youth 29 and under ⚠️</span></td>
+          <td class="deadline">Multiple 2026 deadlines —<br>friendlyfuture.com</td>
+          <td class="fit">⚠️ Programs must focus on youth up to age 29. Viable only if One Life can show significant programming for residents under 30. Confirm with Brett before applying.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Lululemon Community Wellbeing Grant</td>
+          <td><span class="cat cat-corporate">Corporate</span></td>
+          <td class="range">Up to $50,000 USD</td>
+          <td><span class="status s-upcoming">Jul 2026 (typical)</span></td>
+          <td class="deadline">Typically opens July —<br>lululemon.com/giving</td>
+          <td class="fit">⚠️ Grant ≤ 40% of operating budget. Requires wellness/movement/mindfulness programming — One Life has yoga, meditation, fitness. Frame around holistic recovery. Confirm budget size.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Gateway Casinos GatewayGIVES</td>
+          <td><span class="cat cat-gaming">Gaming</span></td>
+          <td class="range">$5,000–$25,000</td>
+          <td><span class="status s-relation">Relationship First</span></td>
+          <td class="deadline">Approach nearest<br>Gateway / Chances property</td>
+          <td class="fit">Funded $45K to MHSU over 3 years. $50K to Burnaby Hospital MHSU zone. Total $1.4M+ in 2025. Gaming-addiction connection makes this a natural pitch.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Cowichan Tribes<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Duncan — referral partnership</span></td>
+          <td><span class="cat cat-indigenous">Indigenous</span></td>
+          <td class="range">Per-diem referrals</td>
+          <td><span class="status s-open">Apply Now</span></td>
+          <td class="deadline">Contact Treatment Coordinator<br>Alexis Cage — cowichantribes.com</td>
+          <td class="fit">BC's largest single band (~5,000 members). Active Treatment Coordinator. 22-week day program — step-down to One Life's recovery housing is a natural transition.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">FNHA Treatment Bed Subsidies<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">First Nations Health Authority</span></td>
+          <td><span class="cat cat-indigenous">Indigenous</span></td>
+          <td class="range">Per-diem revenue</td>
+          <td><span class="status s-open">Apply Now</span></td>
+          <td class="deadline">Email nonfnhafundedtc@fnha.ca<br>to become approved provider</td>
+          <td class="fit">When FNHA treatment centres are full, they subsidize beds at approved non-FNHA programs. One Life already accepts FN clients — register as approved provider immediately.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">FNHA Harm Reduction Grants</td>
+          <td><span class="cat cat-indigenous">Indigenous</span></td>
+          <td class="range">Up to $50,000</td>
+          <td><span class="status s-caveat">Needs Indigenous partner ⚠️</span></td>
+          <td class="deadline">Annual — Jan 2027 likely —<br>hrgrants@fnha.ca</td>
+          <td class="fit">⚠️ One Life is not an Indigenous org — cannot apply directly. Must partner with Snuneymuxw or Tillicum Lelum as lead applicant. Build partnership first, then apply jointly.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Métis Nation BC<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Counselling Connection Program</span></td>
+          <td><span class="cat cat-indigenous">Indigenous</span></td>
+          <td class="range">Per-client funding</td>
+          <td><span class="status s-open">Apply Now</span></td>
+          <td class="deadline">mccprogram@mnbc.ca</td>
+          <td class="fit">Funds Métis citizens' access to substance use treatment. One Life could become an approved provider, generating funded recovery beds for Métis residents.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">TD Ready Commitment<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">National + Nanaimo branch</span></td>
+          <td><span class="cat cat-corporate">Corporate</span></td>
+          <td class="range">$1,000–$1,000,000+</td>
+          <td><span class="status s-open">Quarterly deadlines</span></td>
+          <td class="deadline">td.com/ca/ready-commitment/<br>funding + local branch ask</td>
+          <td class="fit">Housing + health pillars align with One Life's model. TD funding should not exceed 20% of operating budget. Also approach Nanaimo branch manager for local sponsorship.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">RBC Foundation<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">Community grants</span></td>
+          <td><span class="cat cat-corporate">Corporate</span></td>
+          <td class="range">$25,000–$2.5M</td>
+          <td><span class="status s-open">Rolling</span></td>
+          <td class="deadline">rbc.com/our-impact/<br>apply-for-funding</td>
+          <td class="fit">Youth Mental Well-being stream (ages 15–29) + Community Infrastructure Fund (facility upgrades). Both potentially applicable. Registered charity required — ✅.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">Scotiabank ScotiaRISE</td>
+          <td><span class="cat cat-corporate">Corporate</span></td>
+          <td class="range">Varies</td>
+          <td><span class="status s-caveat">No 12-step framing ⚠️</span></td>
+          <td class="deadline">scotiabank.com/scotiarise<br>community@scotiabank.com</td>
+          <td class="fit">⚠️ Explicitly excludes 12-step programs. Frame entirely around housing stability and employment outcomes. Remove all 12-step language from this application.</td>
+        </tr>
+
+        <tr>
+          <td class="funder">BCNPHA Membership<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">BC Non-Profit Housing Assoc.</span></td>
+          <td><span class="cat cat-corporate">Sector Body</span></td>
+          <td class="range">Sector access + funding alerts</td>
+          <td><span class="status s-open">Join now</span></td>
+          <td class="deadline">bcnpha.ca — annual<br>membership fee</td>
+          <td class="fit">Not a grant but a credibility multiplier. Member status signals legitimacy to funders. Access to sector funding alerts, housing policy advocacy, peer network.</td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- ── QUICK WINS ── -->
+  <div class="section-head">
+    <h2>Quick Wins — Apply This Week</h2>
+    <div class="badge badge-action">Low Effort · High Probability</div>
+    <div class="section-rule"></div>
+  </div>
+  <div class="quickwins">
+    <div class="qw">
+      <div class="qw-title">FNHA Approved Provider</div>
+      <div class="qw-amount">Per-diem revenue — immediate</div>
+      <div class="qw-action">Email nonfnhafundedtc@fnha.ca today. One Life already accepts FN clients. This is a revenue stream, not a grant. Easiest money to unlock.</div>
+    </div>
+    <div class="qw">
+      <div class="qw-title">Coastal Community Credit Union</div>
+      <div class="qw-amount">Up to $10,000</div>
+      <div class="qw-action">Rolling intake via dosomegood.ca. HQ in Nanaimo. Housing + mental health are their explicit priority areas. Highest local approval probability.</div>
+    </div>
+    <div class="qw">
+      <div class="qw-title">Nanaimo Foundation — Call Now</div>
+      <div class="qw-amount">$1,000–$25,000</div>
+      <div class="qw-action">LOI window just closed Mar 23. Call Chelsea Pope (250-816-9723) immediately about late submissions or next cycle. Best relationship to build.</div>
+    </div>
+    <div class="qw">
+      <div class="qw-title">BC Charitable Gaming Licence</div>
+      <div class="qw-amount">$5,000–$100,000+ self-directed</div>
+      <div class="qw-action">New simplified rules April 13. Apply now to run your own raffles and 50/50 draws. No funder approval required — complete fundraising independence.</div>
+    </div>
+    <div class="qw">
+      <div class="qw-title">Rotary Club of Nanaimo</div>
+      <div class="qw-amount">$1,000–$25,000+</div>
+      <div class="qw-action">Download application, email rotaryclubofnanaimo@gmail.com, and request to present at a meeting. They funded CMHA addiction housing — One Life is a clear match.</div>
+    </div>
+    <div class="qw">
+      <div class="qw-title">Recovery Day BC Booth</div>
+      <div class="qw-amount">$200 cost — 20,000 attendees</div>
+      <div class="qw-action">Book at recoverydaybc.ca before it sells out. September 12, 2026. Canada's largest recovery festival. One Life's most mission-aligned public event opportunity.</div>
+    </div>
+  </div>
+
+
+  <!-- ── STRATEGIC WARNINGS ── -->
+  <div class="section-head">
+    <h2>Strategic Notes &amp; Warnings</h2>
+    <div class="badge badge-warn">Read before applying</div>
+    <div class="section-rule"></div>
+  </div>
+  <div class="warnings">
+    <div class="warn-card red">
+      <div class="warn-title">🚫 ScotiaRISE — Remove All 12-Step Language</div>
+      <div class="warn-body">Scotiabank explicitly excludes 12-step programs from ScotiaRISE funding. Any application that mentions AA, NA, 12-step, or step-based programming will be disqualified. Frame One Life's work entirely around housing stability, employment outcomes, and psychosocial support.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title">⚠️ FNHA Harm Reduction — Needs Indigenous Co-Applicant</div>
+      <div class="warn-body">One Life cannot apply for FNHA Harm Reduction Grants directly — eligibility requires an Indigenous organization as lead or co-applicant. Build the Tillicum Lelum or Snuneymuxw partnership first, then apply jointly. The $50K grant becomes accessible only through that relationship.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title">⚠️ TELUS — Confirm Resident Age Profile First</div>
+      <div class="warn-body">TELUS Friendly Future Foundation requires programs to focus on youth up to age 29. Before applying, Brett needs to confirm what percentage of current and recent residents are under 30. If it's a minority, this application is a stretch and may not be worth the effort.</div>
+    </div>
+    <div class="warn-card teal">
+      <div class="warn-title">💡 Vancouver Foundation — Framing Is Everything</div>
+      <div class="warn-body">The Transforming Systems Grant (up to $300K over 3 years) requires One Life to position itself as transforming Nanaimo's recovery housing system — not just operating beds. The narrative must address root causes of inequality and describe how One Life's model could scale or influence sector practice. Engage a grant writer for this one.</div>
+    </div>
+    <div class="warn-card purple">
+      <div class="warn-title">💡 Lululemon — Budget Check Required</div>
+      <div class="warn-body">Grant cannot exceed 40% of One Life's most recent fiscal year operating budget. If annual revenue is ~$216K (6 beds × $3K/month), cap is ~$86K — well above the grant max, so likely fine. But confirm exact revenue with Brett's financials before July application window.</div>
+    </div>
+    <div class="warn-card teal">
+      <div class="warn-title">💡 Construction Industry — Pitch as Pipeline, Not Charity</div>
+      <div class="warn-body">IWC Excavation, Knappett Industries, and VICA's 450+ member companies need reliable workers. One Life produces employment-ready men in recovery. This pitch is more sustainable than a grant request because it frames One Life as a workforce partner solving a business problem. Brett needs to lead this conversation in person.</div>
+    </div>
+  </div>
+
+
+  <!-- ── NEEDS BRETT ── -->
+  <div class="section-head">
+    <h2>What's Blocking Applications</h2>
+    <div class="badge badge-warn">Needs Brett</div>
+    <div class="section-rule"></div>
+  </div>
+  <div class="brett-grid">
+    <div class="brett-item">
+      <div class="brett-icon">📊</div>
+      <div>
+        <div class="brett-label">Program Outcomes Data</div>
+        <div class="brett-why">Completion rates, employment, sobriety, housing — required for every grant narrative. Highest priority item.</div>
+      </div>
+    </div>
+    <div class="brett-item">
+      <div class="brett-icon">💰</div>
+      <div>
+        <div class="brett-label">Financial Statements (2–3 years)</div>
+        <div class="brett-why">Required for Gaming Grants, Vancouver Foundation, SUAP, CAI, most corporate funders. Also unlocks Lululemon budget check.</div>
+      </div>
+    </div>
+    <div class="brett-item">
+      <div class="brett-icon">🔢</div>
+      <div>
+        <div class="brett-label">CRA Charity Number (9-digit BN)</div>
+        <div class="brett-why">Required for every federal and most provincial applications. Currently only CanadaHelps ID on file.</div>
+      </div>
+    </div>
+    <div class="brett-item">
+      <div class="brett-icon">🏢</div>
+      <div>
+        <div class="brett-label">BC Societies Registration #</div>
+        <div class="brett-why">Required for provincial applications including BC Gaming Grants, Community Action Initiative, Vancouver Foundation.</div>
+      </div>
+    </div>
+    <div class="brett-item">
+      <div class="brett-icon">👥</div>
+      <div>
+        <div class="brett-label">Board of Directors List</div>
+        <div class="brett-why">Required on most grant applications. Names and roles. Boards with diverse community representation strengthen applications.</div>
+      </div>
+    </div>
+    <div class="brett-item">
+      <div class="brett-icon">✍️</div>
+      <div>
+        <div class="brett-label">Writing Samples (Brett's Voice)</div>
+        <div class="brett-why">3–5 emails, Instagram captions, or letters written by Brett. Needed for Fundraising agent voice-matching and authentic grant narratives.</div>
+      </div>
+    </div>
+    <div class="brett-item">
+      <div class="brett-icon">🏠</div>
+      <div>
+        <div class="brett-label">489 Seventh Street Explanation</div>
+        <div class="brett-why">BC registry shows as "Unregistered." Funders will ask. Needs a clear written explanation before submitting any provincial applications.</div>
+      </div>
+    </div>
+    <div class="brett-item">
+      <div class="brett-icon">👤</div>
+      <div>
+        <div class="brett-label">Resident Age Breakdown</div>
+        <div class="brett-why">Required to determine TELUS eligibility (youth under 29). Also strengthens demographic need statements in grant narratives.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <div class="footer">
+    <span>One Life Recovery Society — Private Funding Pipeline · onelife-private-funding.html</span>
+    <span>Compiled April 1, 2026 · Verify all deadlines before submitting</span>
+  </div>
+
+</div>
+</body>
+</html>
